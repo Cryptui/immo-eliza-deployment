@@ -14,7 +14,7 @@ app = FastAPI()
 initialize_h2o()
 
 # Assuming your model is in the relative directory specified
-model_path = '../models/GBM_4_AutoML_2_20240321_133555'
+model_path = 'D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML_2_20240321_133555'
 model = load_model(model_path)
 
 class PropertyData(BaseModel):

@@ -28,11 +28,3 @@ def predict_price(model, input_df):
     predicted_value = predictions.as_data_frame().values.flatten()[0]
     return predicted_value
 
-# If you have specific code to run in this script directly, uncomment and provide the code block here
-# if __name__ == "__main__":
-    # initialize_h2o()
-    # model = load_model('path/to/your/model')
-    # input_data = {} # Your input data here
-    # input_df = pd.DataFrame([input_data])
-    # predicted_price = predict_price(model, input_df)
-    # print(f"Predicted price: {predicted_price}")
