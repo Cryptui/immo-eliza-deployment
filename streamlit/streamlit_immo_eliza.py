@@ -4,7 +4,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import h2o
-from predict import load_model, initialize_h2o, fill_missing_values, predict_price
+from api.predict import load_model, initialize_h2o, fill_missing_values, predict_price
+
 
 # Initialize the H2O server
 initialize_h2o()
@@ -59,8 +60,34 @@ with st.form(key='input_form'):
 
 if submit_button:
     input_data = {
-        # your fields here
+        'property_type': property_type,
+        'subproperty_type': subproperty_type,
+        'region': region,
+        'province': province,
+        'locality': locality,
+        'zip_code': zip_code,
+        'construction_year': construction_year,
+        'total_area_sqm': total_area_sqm,
+        'surface_land_sqm': surface_land_sqm,
+        'nbr_frontages': nbr_frontages,
+        'nbr_bedrooms': nbr_bedrooms,
+        'equipped_kitchen': equipped_kitchen,
+        'fl_furnished': 'Yes' if fl_furnished == 'Yes' else 'No' if fl_furnished == 'No' else np.nan,
+        'fl_open_fire': 'Yes' if fl_open_fire == 'Yes' else 'No' if fl_open_fire == 'No' else np.nan,
+        'fl_terrace': 'Yes' if fl_terrace == 'Yes' else 'No' if fl_terrace == 'No' else np.nan,
+        'terrace_sqm': terrace_sqm,
+        'fl_garden': 'Yes' if fl_garden == 'Yes' else 'No' if fl_garden == 'No' else np.nan,
+        'garden_sqm': garden_sqm,
+        'fl_swimming_pool': 'Yes' if fl_swimming_pool == 'Yes' else 'No' if fl_swimming_pool == 'No' else np.nan,
+        'fl_floodzone': 'Yes' if fl_floodzone == 'Yes' else 'No' if fl_floodzone == 'No' else np.nan,
+        'state_building': state_building,
+        'primary_energy_consumption_sqm': primary_energy_consumption_sqm,
+        'epc': epc,
+        'heating_type': heating_type,
+        'fl_double_glazing': 'Yes' if fl_double_glazing == 'Yes' else 'No' if fl_double_glazing == 'No' else np.nan,
+        'cadastral_income': cadastral_income
     }
+
 
     # Convert 'Yes'/'No' answers to 1/0 and handle 'Unknown'
     for field in ['fl_furnished', 'fl_open_fire', 'fl_terrace', 'fl_garden', 'fl_swimming_pool', 'fl_floodzone', 'fl_double_glazing']:
