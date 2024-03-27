@@ -5,7 +5,8 @@ import numpy as np
 import h2o
 from typing import Optional
 
-from predict import initialize_h2o, load_model, fill_missing_values, convert_boolean_fields, predict_price
+from .predict import initialize_h2o, load_model, fill_missing_values, convert_boolean_fields, predict_price
+
 
 app = FastAPI()
 

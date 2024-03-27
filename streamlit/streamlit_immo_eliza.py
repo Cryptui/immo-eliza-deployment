@@ -4,8 +4,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import h2o
-from predict import load_model, initialize_h2o, fill_missing_values, predict_price
 
+from predict import load_model, initialize_h2o, fill_missing_values, predict_price
 
 
 # Initialize the H2O server
