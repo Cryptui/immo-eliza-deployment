@@ -5,7 +5,7 @@ import numpy as np
 import h2o
 from typing import Optional
 
-from predict import initialize_h2o, load_model, fill_missing_values, predict_price
+from predict import initialize_h2o, load_model, fill_missing_values, convert_boolean_fields, predict_price
 
 app = FastAPI()
 
@@ -44,37 +44,21 @@ class PropertyData(BaseModel):
     fl_double_glazing: Optional[str] = None
     cadastral_income: Optional[str] = None
 
-def convert_boolean_values(input_data):
-    for key, value in input_data.items():
-        if value == 'Yes':
-            input_data[key] = 1
-        elif value == 'No':
-            input_data[key] = 0
-        elif value == 'Unknown':
-            input_data[key] = np.nan
-    return input_data
-
 @app.post("/predict")
 async def predict_endpoint(property_data: PropertyData):
     try:
         # Convert Pydantic object to dict
         input_dict = property_data.dict()
         
-        # Convert 'Yes', 'No', 'Unknown' to 1, 0, np.nan
-        input_dict = convert_boolean_values(input_dict)
-
-        # Convert the dict to DataFrame
+        # Preprocess the input data
         input_df = pd.DataFrame([input_dict])
-
-        # Preprocess the input data (fill missing values, etc.)
         input_df = fill_missing_values(input_df)
+        input_df = convert_boolean_fields(input_df)
 
-        # Convert DataFrame to H2OFrame and predict
-        h2o_df = h2o.H2OFrame(input_df)
-        prediction = model.predict(h2o_df)
+        # Predict using the model
+        prediction = predict_price(model, input_df)
 
-        # Extract and return the predicted value
-        predicted_value = prediction.as_data_frame().values.flatten()[0]
-        return {"predicted_price": predicted_value}
+        # Return the predicted value
+        return {"predicted_price": prediction}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

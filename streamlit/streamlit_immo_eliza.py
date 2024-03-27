@@ -4,14 +4,16 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import h2o
-from api.predict import load_model, initialize_h2o, fill_missing_values, predict_price
+from predict import load_model, initialize_h2o, fill_missing_values, predict_price
+
 
 
 # Initialize the H2O server
 initialize_h2o()
 
 # Load the model
-model = load_model('models/GBM_4_AutoML_2_20240321_133555')
+model = load_model('D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML_2_20240321_133555')
+
 
 # Streamlit app layout
 st.title('Immo Eliza Real Estate Price Prediction')
@@ -22,6 +24,7 @@ This model provides the most accurate predictions for properties that have:
 - Surface Land (sqm) up to 876.0
 - Total Area (sqm) up to 270.0
 - Number of Bedrooms up to 4
+- Leave values blank if you don't have any information or is not applicable
 """)
 
 # Define the form for user input
@@ -30,17 +33,19 @@ with st.form(key='input_form'):
 
     # Create input fields
     property_type = st.selectbox('Property Type', ['', 'APARTMENT', 'HOUSE'])
-    subproperty_type = st.selectbox('Subproperty Type', ['', 'DUPLEX', 'VILLA', 'EXCEPTIONAL_PROPERTY', 'FLAT_STUDIO', 'GROUND_FLOOR', 'PENTHOUSE', 'FARMHOUSE', 'APARTMENT_BLOCK', 'COUNTRY_COTTAGE', 'TOWN_HOUSE', 'SERVICE_FLAT', 'MANSION', 'MIXED_USE_BUILDING', 'MANOR_HOUSE', 'LOFT', 'BUNGALOW', 'KOT', 'CASTLE', 'CHALET', 'OTHER_PROPERTY', 'TRIPLEX'])
+    subproperty_type = st.selectbox('Subproperty Type', ['', 'APARTMENT', 'HOUSE', 'VILLA', 'GROUND_FLOOR', 'APARTMENT_BLOCK', 'BUNGALOW', 'CASTLE', 'CHALET', 'COUNTRY_COTTAGE', 'DUPLEX', 'EXCEPTIONAL_PROPERTY', 'FARMHOUSE', 'FLAT_STUDIO', 'GROUND_FLOOR', 'KOT', 'LOFT', 'MANOR_HOUSE', 'MANSION', 'MIXED_USE_BUILDING', 'OTHER_PROPERTY', 'PENTHOUSE', 'SERVICE_FLAT', 'TOWN_HOUSE', 'TRIPLEX', 'VILLA'])
     region = st.selectbox('Region', ['', 'Flanders', 'Brussels-Capital', 'Wallonia'])
-    province = st.text_input('Province')
-    locality = st.text_input('Locality')
-    zip_code = st.text_input('ZIP Code')
+    province_options = ['', 'Antwerp', 'Brussels', 'East Flanders', 'Flemish Brabant', 'Hainaut', 'LiÃƒÂ¨ge', 'Limburg', 'Luxembourg', 'Namur', 'Walloon Brabant', 'West Flanders']  
+    province = st.selectbox('Province', province_options)
+    locality_options = ['', 'Aalst', 'Antwerp', 'Arlon', 'Ath', 'Bastogne', 'Brugge', 'Brussels', 'Charleroi', 'Dendermonde', 'Diksmuide', 'Dinant', 'Eeklo', 'Gent', 'Halle-Vilvoorde', 'Hasselt', 'Huy', 'Ieper', 'Kortrijk', 'Leuven', 'LiÃƒÂ¨ge', 'Maaseik', 'Marche-en-Famenne', 'Mechelen', 'Mons', 'Mouscron', 'Namur', 'NeufchÃƒÂ¢teau', 'Nivelles', 'Oostend', 'Oudenaarde', 'Philippeville', 'Roeselare', 'Sint-Niklaas', 'Soignies', 'Thuin', 'Tielt', 'Tongeren', 'Tournai', 'Turnhout', 'Verviers', 'Veurne', 'Virton', 'Waremme']
+    locality = st.selectbox('Locality', locality_options)
+    zip_code = st.text_input('ZIP Code (between 1000-9992)')
     construction_year = st.text_input('Construction Year')
     total_area_sqm = st.text_input('Total Area (sqm)')
     surface_land_sqm = st.text_input('Surface Land (sqm)')
     nbr_frontages = st.text_input('Number of Frontages')
     nbr_bedrooms = st.text_input('Number of Bedrooms')
-    equipped_kitchen = st.selectbox('Equipped Kitchen', ['', 'INSTALLED', 'HYPER_EQUIPPED', 'NOT_INSTALLED', 'USA_UNINSTALLED', 'USA_HYPER_EQUIPPED', 'SEMI_EQUIPPED', 'USA_INSTALLED', 'USA_SEMI_EQUIPPED'])
+    equipped_kitchen = st.selectbox('Equipped Kitchen', ['', 'HYPER_EQUIPPED', 'INSTALLED', 'missing_info', 'NOT_INSTALLED', 'SEMI_EQUIPPED', 'USA_HYPER_EQUIPPED', 'USA_INSTALLED', 'USA_SEMI_EQUIPPED', 'USA_UNINSTALLED'])
     fl_furnished = st.radio('Furnished', ['Yes', 'No', 'Unknown'])
     fl_open_fire = st.radio('Open Fire', ['Yes', 'No', 'Unknown'])
     fl_terrace = st.radio('Terrace', ['Yes', 'No', 'Unknown'])
