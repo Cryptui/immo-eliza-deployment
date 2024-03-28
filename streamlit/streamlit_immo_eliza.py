@@ -10,7 +10,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'a
 
 from api.predict import load_model, initialize_h2o, predict_price, fill_missing_values
 
-
 # Initialize H2O server (only once)
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
 def initialize_h2o_server():
