@@ -1,21 +1,37 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pandas as pd
-import numpy as np
 import h2o
 from typing import Optional
-
+import os
 from .predict import initialize_h2o, load_model, fill_missing_values, convert_boolean_fields, predict_price
 
+# Initialize H2O
+h2o.init()
+
+def load_model(model_path):
+    return h2o.load_model(model_path)
+
+# Define model paths
+absolute_model_path = "D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML"
+relative_model_path = "api/models/GBM_4_AutoML"
+
+# Check if the absolute model path exists
+if os.path.exists(absolute_model_path):
+    model_path = absolute_model_path
+else:
+    # If the absolute path doesn't exist, use the relative path
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(current_directory, relative_model_path)
+
+# Load the model
+model = load_model(model_path)
 
 app = FastAPI()
 
-# Initialize H2O
-initialize_h2o()
-
-# Assuming your model is in the relative directory specified
-model_path = 'D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML_2_20240321_133555'
-model = load_model(model_path)
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to your FastAPI application!"}
 
 class PropertyData(BaseModel):
     property_type: Optional[str] = None
@@ -45,6 +61,7 @@ class PropertyData(BaseModel):
     fl_double_glazing: Optional[str] = None
     cadastral_income: Optional[str] = None
 
+
 @app.post("/predict")
 async def predict_endpoint(property_data: PropertyData):
     try:
@@ -53,9 +70,8 @@ async def predict_endpoint(property_data: PropertyData):
         
         # Preprocess the input data
         input_df = pd.DataFrame([input_dict])
-        input_df = fill_missing_values(input_df)
-        input_df = convert_boolean_fields(input_df)
-
+        # Preprocess the input DataFrame...
+        
         # Predict using the model
         prediction = predict_price(model, input_df)
 

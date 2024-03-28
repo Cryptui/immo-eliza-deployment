@@ -1,19 +1,28 @@
-# Use the official Python image.
-FROM python:3.9-slim
+# Starts from the python 3.10 official docker image
+FROM python:3.10
 
-# Set the working directory in the Docker container.
-WORKDIR /app
+# Install Java
+RUN apt-get update && \
+    apt-get install -y default-jre
 
-# Copy the requirements file into the container at /app.
-COPY requirements.txt /app/
+# Create a folder "/api" at the root of the image
+RUN mkdir /api
 
-COPY models /app/models
+# Define "/api" as the working directory
+WORKDIR /api
 
-# Install any dependencies.
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy all the files from the current directory to "/api"
+COPY . /api
 
-# Copy the entire project directory into the container at /app.
-COPY . /app/
+# Update pip
+RUN pip install --upgrade pip
 
-# Specify the command to run on container start.
-CMD ["streamlit", "run", "streamlit/streamlit_immo_eliza.py"]
+# Install dependencies from "requirements.txt"
+RUN pip install -r requirements.txt
+
+# Set an environment variable for the model path
+ENV MODEL_PATH=/models/GBM_4_AutoML
+
+# Run the app
+# Set host to 0.0.0.0 to make it run on the container's network
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0"]
