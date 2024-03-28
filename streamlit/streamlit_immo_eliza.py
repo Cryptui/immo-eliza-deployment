@@ -1,5 +1,8 @@
 import os
+print("Current working directory:", os.getcwd())
+print("Directory contents:", os.listdir())
 import sys
+print(sys.path)
 import streamlit as st
 import pandas as pd
 import numpy as np
