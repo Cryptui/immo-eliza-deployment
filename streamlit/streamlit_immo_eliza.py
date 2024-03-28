@@ -8,6 +8,16 @@ import pandas as pd
 import numpy as np
 import h2o
 
+# Get the directory containing your script.
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory of the script directory.
+project_root = os.path.dirname(script_dir)
+
+# Add the parent directory to sys.path so Python knows where to find the api module.
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
 # Adjust the path to include your 'api' directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'api')))
 
