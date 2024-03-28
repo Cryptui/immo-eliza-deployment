@@ -8,10 +8,8 @@ import h2o
 # Adjust the path to include your 'api' directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'api')))
 
-from predict import load_model, initialize_h2o, predict_price, fill_missing_values
+from api.predict import load_model, initialize_h2o, predict_price, fill_missing_values
 
-# Assuming predict.py is in the 'api' directory and contains required functions
-from predict import load_model
 
 # Initialize H2O server (only once)
 @st.cache(allow_output_mutation=True, suppress_st_warning=True)
@@ -26,7 +24,8 @@ h2o_server = initialize_h2o_server()
 def load_h2o_model(model_path):
     return h2o.load_model(model_path)
 
-model = load_h2o_model('D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML_2_20240321_133555')
+#model = load_h2o_model('D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML_2_20240321_133555')
+model = load_h2o_model('/app/models/GBM_4_AutoML_2_20240321_133555')
 
 # Streamlit app layout
 st.title('Immo Eliza Real Estate Price Prediction')
