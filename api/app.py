@@ -60,6 +60,6 @@ async def predict_endpoint(property_data: PropertyData):
         prediction = predict_price(model, input_df)
 
         # Return the predicted value
-        return {"predicted_price": prediction}
+        return {"predicted_price": int(round(prediction,0))}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
