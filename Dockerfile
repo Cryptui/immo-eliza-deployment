@@ -30,5 +30,9 @@ ENV MODEL_PATH=/models/GBM_4_AutoML
 # Set an environment variable for the H2O server address
 ENV H2O_SERVER=http://127.0.0.1:54321
 
-# Run the app using uvicorn
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0"]
+# Expose both FastAPI and Streamlit ports
+EXPOSE 8000
+EXPOSE 8501
+
+# Run the app using uvicorn for FastAPI and streamlit command for Streamlit
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

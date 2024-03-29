@@ -27,40 +27,39 @@ async def read_root():
     return {"message": "Welcome to your FastAPI application!"}
 
 class PropertyData(BaseModel):
-    property_type: Optional[str] = None
-    subproperty_type: Optional[str] = None
-    region: Optional[str] = None
-    province: Optional[str] = None
-    locality: Optional[str] = None
-    zip_code: Optional[str] = None
-    construction_year: Optional[str] = None
-    total_area_sqm: Optional[str] = None
+    property_type: Optional[str] = "HOUSE"
+    subproperty_type: Optional[str] = "VILLA"
+    region: Optional[str] = "Flanders"
+    province: Optional[str] = "Antwerp"
+    locality: Optional[str] = "Antwerp"
+    zip_code: Optional[str] = "2000"
+    construction_year: Optional[str] = "1990"
+    total_area_sqm: Optional[str] = "200"
     surface_land_sqm: Optional[str] = None
-    nbr_frontages: Optional[str] = None
-    nbr_bedrooms: Optional[str] = None
-    equipped_kitchen: Optional[str] = None
-    fl_furnished: Optional[str] = None
-    fl_open_fire: Optional[str] = None
-    fl_terrace: Optional[str] = None
+    nbr_frontages: Optional[str] = "2"
+    nbr_bedrooms: Optional[str] = "3"
+    equipped_kitchen: Optional[str] = "INSTALLED"
+    fl_furnished: Optional[str] = "No"
+    fl_open_fire: Optional[str] = "Yes"
+    fl_terrace: Optional[str] = "Yes"
     terrace_sqm: Optional[str] = None
-    fl_garden: Optional[str] = None
+    fl_garden: Optional[str] = "Yes"
     garden_sqm: Optional[str] = None
-    fl_swimming_pool: Optional[str] = None
-    fl_floodzone: Optional[str] = None
-    state_building: Optional[str] = None
-    primary_energy_consumption_sqm: Optional[str] = None
-    epc: Optional[str] = None
-    heating_type: Optional[str] = None
-    fl_double_glazing: Optional[str] = None
-    cadastral_income: Optional[str] = None
+    fl_swimming_pool: Optional[str] = "No"
+    fl_floodzone: Optional[str] = "No"
+    state_building: Optional[str] = "GOOD"
+    primary_energy_consumption_sqm: Optional[str] = "200"
+    epc: Optional[str] = "B"
+    heating_type: Optional[str] = "GAS"
+    fl_double_glazing: Optional[str] = "Yes"
+    cadastral_income: Optional[str] = "1500"
 
 
 @app.post("/predict")
 async def predict_endpoint(property_data: PropertyData):
+    # Convert Pydantic object to dict
+    input_dict = property_data.dict()
     try:
-        # Convert Pydantic object to dict
-        input_dict = property_data.dict()
-        
         # Preprocess the input data
         input_df = pd.DataFrame([input_dict])
         # Preprocess the input DataFrame...
@@ -69,6 +68,7 @@ async def predict_endpoint(property_data: PropertyData):
         prediction = predict_price(model, input_df)
 
         # Return the predicted value
-        return {"predicted_price": int(round(prediction,0))}
+        return {"predicted_price": int(round(prediction, 0))}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
