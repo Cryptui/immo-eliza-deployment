@@ -27,5 +27,8 @@ RUN pip install --upgrade pip && \
 # Set an environment variable for the model path
 ENV MODEL_PATH=/models/GBM_4_AutoML
 
+# Set an environment variable for the H2O server address
+ENV H2O_SERVER=http://127.0.0.1:54321
+
 # Run the app using uvicorn
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0"]

@@ -8,10 +8,11 @@ import h2o
 from typing import Optional
 import os
 
-from predict import initialize_h2o, load_model as predict_load_model, fill_missing_values, convert_boolean_fields, predict_price
+from predict import load_model as predict_load_model, fill_missing_values, predict_price
 
-# Initialize H2O
-h2o.init()
+# Connect to the H2O server using the environment variable
+h2o_server = os.environ.get('H2O_SERVER', 'http://localhost:54321')
+h2o.init(url=h2o_server)
 
 # Use an environment variable for the model path, with a default if not set
 model_path = os.getenv('MODEL_PATH', '/models/GBM_4_AutoML')
