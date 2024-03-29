@@ -19,10 +19,16 @@ COPY ./models /models
 # Copy the requirements.txt into the container's working directory
 COPY requirements.txt /api
 
+# Copy the streamlit directory into the container
+COPY ./streamlit /api/streamlit
+
 # Update pip and install dependencies from "requirements.txt"
 # Use --no-cache-dir to reduce image size
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
+
+# Install Streamlit
+RUN pip install streamlit
 
 # Set an environment variable for the model path
 ENV MODEL_PATH=/models/GBM_4_AutoML
@@ -30,9 +36,12 @@ ENV MODEL_PATH=/models/GBM_4_AutoML
 # Set an environment variable for the H2O server address
 ENV H2O_SERVER=http://127.0.0.1:54321
 
+# Add Streamlit installation directory to PATH
+ENV PATH="/usr/local/bin:${PATH}"
+
 # Expose both FastAPI and Streamlit ports
 EXPOSE 8000
 EXPOSE 8501
 
-# Run the app using uvicorn for FastAPI and streamlit command for Streamlit
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the Streamlit app at the root URL
+CMD ["streamlit", "run", "/api/streamlit/streamlit_immo_eliza.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.enableCORS=false", "--server.enableXsrfProtection=false"]

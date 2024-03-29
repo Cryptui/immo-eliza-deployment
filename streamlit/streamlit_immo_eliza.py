@@ -1,12 +1,11 @@
-from dotenv import load_dotenv
-load_dotenv()  # This loads the variables from .env into the environment.
-
 import os
 import streamlit as st
 import pandas as pd
 import numpy as np
 import h2o
 import sys
+
+sys.path.append('/api')  # Adjust the path if predict.py is in a subdirectory
 
 from pathlib import Path
 from predict import load_model, initialize_h2o, predict_price, fill_missing_values
