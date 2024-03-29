@@ -1,12 +1,21 @@
+from dotenv import load_dotenv
+load_dotenv()  # This loads the variables from .env into the environment.
+
 import os
-import sys
 import streamlit as st
 import pandas as pd
 import numpy as np
 import h2o
+import sys
 
-# Adjust the path to include your 'api' directory
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'api')))
+from pathlib import Path
+
+# Get the directory of the current file (streamlit_immo_eliza.py), then go up one level to the project root
+project_root = Path(__file__).parent.parent
+
+# Add the 'api' directory to sys.path
+api_dir = project_root / 'api'
+sys.path.append(str(api_dir))
 
 from predict import load_model, initialize_h2o, predict_price, fill_missing_values
 
@@ -18,26 +27,23 @@ def initialize_h2o_server():
 
 h2o_server = initialize_h2o_server()
 
-# Set the model path dynamically based on environment
-absolute_model_path = os.getenv("ABSOLUTE_MODEL_PATH", "D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML")
-relative_model_path = os.getenv("RELATIVE_MODEL_PATH", "api/models/GBM_4_AutoML")
-model_path = absolute_model_path if os.path.exists(absolute_model_path) else os.path.join(os.path.dirname(__file__), '..', relative_model_path)
+# Use an environment variable for the model path
+model_path = os.getenv("MODEL_PATH", "models/GBM_4_AutoML")
 model = load_model(model_path)
 
 # Streamlit app layout
 st.title('Immo Eliza Real Estate Price Prediction')
 
 st.write("""
-### Fill as many fields as possible for an accurate price calculation 
+### Fill in as many fields as possible for an accurate price calculation.
          
-### Leave values blank if you don't have any information or is not applicable
+### Leave values blank if you don't have any information or if it's not applicable.
          
 ### Please note:
 This model provides the most accurate predictions for properties that have:
 - Surface Land (sqm) up to 876.0
 - Total Area (sqm) up to 270.0
-- Number of Bedrooms up to 4
-
+- Number of Bedrooms up to 4.
 """)
 
 # Define the form for user input

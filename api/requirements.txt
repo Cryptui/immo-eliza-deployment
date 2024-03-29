@@ -4,3 +4,4 @@ pydantic
 pandas
 numpy
 h2o
+python-dotenv

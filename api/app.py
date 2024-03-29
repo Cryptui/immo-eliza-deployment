@@ -1,31 +1,23 @@
+from dotenv import load_dotenv
+load_dotenv()  # This loads the variables from .env into the environment.
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pandas as pd
 import h2o
 from typing import Optional
 import os
-from .predict import initialize_h2o, load_model, fill_missing_values, convert_boolean_fields, predict_price
+
+from predict import initialize_h2o, load_model as predict_load_model, fill_missing_values, convert_boolean_fields, predict_price
 
 # Initialize H2O
 h2o.init()
 
-def load_model(model_path):
-    return h2o.load_model(model_path)
+# Use an environment variable for the model path, with a default if not set
+model_path = os.getenv('MODEL_PATH', '/models/GBM_4_AutoML')
 
-# Define model paths
-absolute_model_path = "D:/Github/Projects/immo-eliza-deployment/models/GBM_4_AutoML"
-relative_model_path = "api/models/GBM_4_AutoML"
-
-# Check if the absolute model path exists
-if os.path.exists(absolute_model_path):
-    model_path = absolute_model_path
-else:
-    # If the absolute path doesn't exist, use the relative path
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(current_directory, relative_model_path)
-
-# Load the model
-model = load_model(model_path)
+# Load the model using the adjusted function name to avoid naming conflict
+model = predict_load_model(model_path)
 
 app = FastAPI()
 
